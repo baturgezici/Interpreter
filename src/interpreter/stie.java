@@ -7,14 +7,14 @@ import java.nio.file.Paths;
 public class stie {
 	public static void main(String[] args) {
 
-		Parser parser = new Parser(new Scanner("program1.txt"));
-		parser.parseOld();
+		Parser parser = new Parser(new Scanner("program.txt"));
+		parser.parseActual();
 	}
 }
 
 class Scanner {
 	private String progText;
-	private int curPos = 0;
+	int curPos = 0;
 
 	Scanner(String fileName) {
 
@@ -88,6 +88,7 @@ class Scanner {
 class Parser {
 	private Scanner scanner;
 	private Token curToken;
+	private Token contToken;
 
 	Parser(Scanner scanner) {
 		this.scanner = scanner;
@@ -123,8 +124,16 @@ class Parser {
 			O();
 		else if (curToken.getType().equals(TokenType.INPUT))
 			I();
+		else if (curToken.getType().equals(TokenType.WHILE_END))
+			curToken = scanner.nextToken();
+		else if (curToken.getType().equals(TokenType.PERIOD))
+			return;
 		else {
-			System.out.println("There is a problem inside of the Statement");
+			curToken = scanner.nextToken();
+			if (curToken.getType().equals(TokenType.END_OF_FILE))
+				System.out.println("end of the code");
+			else
+				System.out.println("There is a problem inside of the Statement " + curToken.getType().text);
 		}
 
 	}
@@ -152,7 +161,7 @@ class Parser {
 	}
 
 	void A() {
-		curToken = scanner.nextToken();
+		// curToken = scanner.nextToken();
 		L();
 		curToken = scanner.nextToken();
 		if (curToken.getType().equals(TokenType.EQUAL)) {
@@ -161,9 +170,11 @@ class Parser {
 		} else {
 			System.out.println("Syntax error, no '=' in assignment.");
 		}
-		curToken = scanner.nextToken();
+		// curToken = scanner.nextToken();
 		if (!curToken.getType().equals(TokenType.SEMICOLON)) {
 			System.out.println("Missing ';' in assignment");
+		} else {
+			curToken = scanner.nextToken();
 		}
 
 	}
@@ -171,30 +182,27 @@ class Parser {
 	void W() {
 		curToken = scanner.nextToken();
 		E();
-		curToken = scanner.nextToken();
-		if (curToken.getType().equals(TokenType.QUESTION_MARK)) {
+		// curToken = scanner.nextToken();
+		if (curToken.getType().equals(TokenType.CONDITION)) {
 			curToken = scanner.nextToken();
 			S();
 		} else {
 			System.out.println("Syntax error, no '?' in while statement");
 		}
-		curToken = scanner.nextToken();
-		if (!curToken.getType().equals(TokenType.WHILE_END)) {
-			System.out.println("Syntax error about while end");
-		}
+//		curToken = scanner.nextToken();
+//		if (!curToken.getType().equals(TokenType.WHILE_END)) {
+//			System.out.println("Syntax error about while end");
+//		}
 	}
 
 	void O() {
 		curToken = scanner.nextToken();
-		if (curToken.getType().equals(TokenType.OUTPUT)) {
-			curToken = scanner.nextToken();
-			E();
-		} else {
-			System.out.println("Syntax error no '<' in output");
-		}
-		curToken = scanner.nextToken();
+		E();
+		// curToken = scanner.nextToken();
 		if (!curToken.getType().equals(TokenType.SEMICOLON)) {
 			System.out.println("Missing ';' in assignment");
+		} else {
+			curToken = scanner.nextToken();
 		}
 
 	}
@@ -215,20 +223,22 @@ class Parser {
 
 	void E() {
 		T();
-		curToken = scanner.nextToken();
+		// curToken = scanner.nextToken();
 		if (curToken.getType().equals(TokenType.PLUS) || curToken.getType().equals(TokenType.MINUS)) {
 			curToken = scanner.nextToken();
 			T();
-			curToken = scanner.nextToken();
-			if (curToken.getType().equals(TokenType.PLUS) || curToken.getType().equals(TokenType.MINUS)) {
-				E();
-			}
+			/*
+			 * contToken = scanner.nextToken(); if
+			 * (contToken.getType().equals(TokenType.PLUS) ||
+			 * contToken.getType().equals(TokenType.MINUS)) { curToken = contToken; E(); }
+			 * else { scanner.curPos--; }
+			 */
 		}
 	}
 
 	void T() {
 		U();
-		curToken = scanner.nextToken();
+		// curToken = scanner.nextToken();
 		if (curToken.getType().equals(TokenType.MULTIPLY) || curToken.getType().equals(TokenType.DIVIDE)
 				|| curToken.getType().equals(TokenType.MODULO)) {
 			curToken = scanner.nextToken();
