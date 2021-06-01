@@ -89,6 +89,7 @@ class Parser {
 	private Scanner scanner;
 	private Token curToken;
 	private Token contToken;
+	private boolean grammer = true;
 
 	Parser(Scanner scanner) {
 		this.scanner = scanner;
@@ -131,7 +132,10 @@ class Parser {
 		else {
 			curToken = scanner.nextToken();
 			if (curToken.getType().equals(TokenType.END_OF_FILE))
-				System.out.println("end of the code");
+				if(grammer)
+					System.out.println("Grammatically correct, end of the code");
+				else
+					System.out.println("Grammatically incorrect, end of the code");
 			else
 				System.out.println("There is a problem inside of the Statement " + curToken.getType().text);
 		}
@@ -147,6 +151,7 @@ class Parser {
 			S();
 		} else {
 			System.out.println("Syntax error, no '?' in if statement");
+			grammer = false;
 		}
 		curToken = scanner.nextToken();
 		if (curToken.getType().equals(TokenType.ELSE)) {
@@ -157,6 +162,7 @@ class Parser {
 
 		if (!curToken.getType().equals(TokenType.IF_END)) {
 			System.out.println("Syntax error about if end");
+			grammer = false;
 		}
 	}
 
@@ -169,10 +175,12 @@ class Parser {
 			E();
 		} else {
 			System.out.println("Syntax error, no '=' in assignment.");
+			grammer = false;
 		}
 		// curToken = scanner.nextToken();
 		if (!curToken.getType().equals(TokenType.SEMICOLON)) {
 			System.out.println("Missing ';' in assignment");
+			grammer = false;
 		} else {
 			curToken = scanner.nextToken();
 		}
@@ -188,6 +196,7 @@ class Parser {
 			S();
 		} else {
 			System.out.println("Syntax error, no '?' in while statement");
+			grammer = false;
 		}
 //		curToken = scanner.nextToken();
 //		if (!curToken.getType().equals(TokenType.WHILE_END)) {
@@ -201,6 +210,7 @@ class Parser {
 		// curToken = scanner.nextToken();
 		if (!curToken.getType().equals(TokenType.SEMICOLON)) {
 			System.out.println("Missing ';' in assignment");
+			grammer = false;
 		} else {
 			curToken = scanner.nextToken();
 		}
@@ -214,10 +224,12 @@ class Parser {
 			L();
 		} else {
 			System.out.println("Syntax error no '>' in output");
+			grammer = false;
 		}
 		curToken = scanner.nextToken();
 		if (!curToken.getType().equals(TokenType.SEMICOLON)) {
 			System.out.println("Missing ';' in assignment");
+			grammer = false;
 		}
 	}
 
@@ -266,6 +278,7 @@ class Parser {
 			curToken = scanner.nextToken();
 			if (!curToken.getType().equals(TokenType.R_PRNTHS)) {
 				System.out.println("Syntax error no ')'");
+				grammer = false;
 			}
 		} else if (curToken.getType().equals(TokenType.DIG)) {
 			D();
@@ -273,18 +286,21 @@ class Parser {
 			L();
 		} else {
 			System.out.println("There is unknown type (class F())");
+			grammer = false;
 		}
 	}
 
 	void D() {
 		if (!curToken.getType().equals(TokenType.DIG)) {
 			System.out.println("Not digit");
+			grammer = false;
 		}
 	}
 
 	void L() {
 		if (!curToken.getType().equals(TokenType.IDENTIFIER)) {
 			System.out.println("Not Identifier");
+			grammer = false;
 		}
 	}
 
